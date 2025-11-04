@@ -1,4 +1,4 @@
-import numpy as np, matplotlib.pyplot as plt, time, matplotlib.image as img
+import numpy as np, matplotlib.pyplot as plt, time, matplotlib.image as img, math
 
 # Ex 1
 def DFT(x):
@@ -141,16 +141,16 @@ semnal_2 = np.sin(2 * np.pi * frec_2 * t_mare)
 
 fig, ax = plt.subplots(3, 1, figsize=(12, 10))
 
-ax[0].plot(t_mare, semnal_continuu, label="Semnal continuu")
-ax[0].scatter(t_corect, semnal_esantionat_corect, color="red")
+ax[0].plot(t_mare, semnal_continuu, label="Semnal continuu", color="blue")
+ax[0].scatter(t_corect, semnal_esantionat_corect, label="Esantionat", color="red")
 ax[0].set_title("Fara aliasing (f_s > f_Nyquist)")
-ax[0].legend()
+ax[0].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[0].grid(True)
 
-ax[1].plot(t_mare, semnal_continuu, label="Semnal continuu")
-ax[1].scatter(t_mic, semnal_esantionat_alias, color="orange")
+ax[1].plot(t_mare, semnal_continuu, label="Semnal continuu", color="blue")
+ax[1].scatter(t_mic, semnal_esantionat_alias, label="Esantionat", color="orange")
 ax[1].set_title("Cu aliasing (f_s < f_Nyquist)")
-ax[1].legend()
+ax[1].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[1].grid(True)
 
 ax[2].plot(t_mare, semnal_1, label="Semnal 1", color="red")
@@ -160,7 +160,7 @@ ax[2].scatter(t_corect, np.sin(2 * np.pi * frec_1 * t_corect), color="red", labe
 ax[2].scatter(t_corect, np.sin(2 * np.pi * frec_2 * t_corect), color="blue", label="Esantionare 2")
 ax[2].scatter(t_corect, np.sin(2 * np.pi * frecventa * t_corect),  color="green", label="Esantionare 3")
 ax[2].set_title("Comparare semnal 1 vs semnal 2 vs semnal 3")
-ax[2].legend()
+ax[2].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[2].grid(True)
 
 fig.tight_layout(pad=4)
@@ -177,3 +177,13 @@ plt.imshow(im)
 plt.title("Spectrograma inregistrarii vocalelor cu Audacity")
 plt.axis('off')
 plt.show()
+
+# Ex 7
+
+P_semnal = 90
+Snr_db = 80
+Snr = 10 ** (Snr_db / 10)
+P_zgomot = P_semnal / Snr
+P_zgomot_db = 10 * np.log10(P_zgomot)
+
+print(f"Puterea zgomotului este: {P_zgomot_db}dB")
