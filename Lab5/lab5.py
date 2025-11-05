@@ -4,6 +4,7 @@ x = np.genfromtxt('./Lab5/Train.csv', delimiter=",")
 signal = x[:, 2]  
 signal = signal[~np.isnan(signal)] # Sterg nan values
 print("Data: ", signal)
+
 N = len(signal)
 
 X = np.fft.fft(signal) # Transformata fourier
@@ -36,3 +37,33 @@ plt.grid(True)
 # plt.xlim(0, fs/2)
 plt.savefig("./Lab5/modul_transformata_fourier_semnal.pdf", format="pdf")
 plt.show()
+
+# Ex e
+
+comp_cont = np.mean(signal) # Componenta continua a semnalului daca e 0 nu exista daca != 0 exista
+print("Componenta continua a semnalului:", comp_cont)
+signal_fcomp_cont = signal - comp_cont
+X = np.fft.fft(signal_fcomp_cont)
+X_mod = abs(X / N) 
+X_mod = X_mod[:N // 2]
+
+plt.figure(figsize=(10, 5))
+# plt.plot(f, X_mod)
+plt.semilogy(f, X_mod)
+plt.title("Modulul Transformatei Fourier fara componeneta_continua")
+plt.xlabel("Frecventa")
+plt.ylabel("Modul transformata Fourier")
+plt.grid(True)
+# plt.xlim(0, fs/2)
+plt.savefig("./Lab5/modul_transformata_fourier_fara_componeneta_continua.pdf", format="pdf")
+plt.show()
+
+# Ex f
+
+top_indici = np.argsort(X_mod)[-4:][::-1]
+topf_vf_mod_trans_fourier = X_mod[top_indici]
+top_frec = f[top_indici]
+
+print("Primele 4 varfuri ale modulului transformatei Fourier si frecventele lor:")
+for i in range(4):
+    print(f"{i+1}. Amplitudine: {top_indici[i]}, Frecventa: {top_frec[i]} Hz")
