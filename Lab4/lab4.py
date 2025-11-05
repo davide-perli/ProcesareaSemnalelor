@@ -11,6 +11,17 @@ def DFT(x):
         X.append(suma)
     return np.array(X)
 
+def FFT(x):
+    n = len(x)
+    if n <= 1:
+        return x
+    if n % 2 != 0:
+        return [sum(x[m] * np.exp(-2j * np.pi * k * m / n) for m in range(n)) for k in range(n)]
+    par = FFT(x[0::2])
+    imp = FFT(x[1::2])
+    T = [np.exp(-2j * np.pi * k / n) * imp[k] for k in range(n // 2)]
+    return [par[k] + T[k] for k in range(n // 2)] + [par[k] - T[k] for k in range(n // 2)]
+
 frecventa_de_esantionare = 600
 durata = 1
 t = np.linspace(0, durata, int(durata * frecventa_de_esantionare))
@@ -35,19 +46,24 @@ for N in N_values:
     timp_DFT.append(time.time() - start)
 
     start = time.time()
+    FFT(semnal)
+    timp_FFT.append(time.time() - start)
+
+    start = time.time()
     np.fft.fft(semnal)
     timp_numpy.append(time.time() - start)
 
 plt.figure(figsize=(10, 5))
 plt.plot(N_values, timp_DFT, "o-", label="DFT")
-plt.plot(N_values, timp_numpy, "o-", label="FFT")
+plt.plot(N_values, timp_FFT, "o-", label="FFT Manual")
+plt.plot(N_values, timp_numpy, "o-", label="FFT Numpy")
 plt.yscale('log')  
 plt.xlabel("Dimensiunea vectorului N")
 plt.ylabel("Timp de execuție log scale")
 plt.title("Compararea timpiilor de execuție: DFT vs FFT")
 plt.grid(True)
 plt.legend()
-plt.savefig(fname="./Lab4/dft_vs_fft.pdf", format="pdf")
+plt.savefig(fname="./Lab4/dft_vs_fft_manual_vs_fft_numpy.pdf", format="pdf")
 plt.show()
 
 # Ex 2
@@ -168,6 +184,7 @@ plt.savefig("./Lab4/lipsa_fenomenului_de_aliere.pdf", format="pdf")
 plt.show()
 
 # Ex 4
+
 print(f"Pentru contrabas (40Hz - 200Hz) fs > 2 * fmax, fmax = 200 => minimul Nyquist este: 400Hz")
 
 # Ex 5
