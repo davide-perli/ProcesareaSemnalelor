@@ -16,11 +16,14 @@ def FFT(x):
     if n <= 1:
         return x
     if n % 2 != 0:
-        return [sum(x[m] * np.exp(-2j * np.pi * k * m / n) for m in range(n)) for k in range(n)]
+        x = np.append(x, 0) # adauga un 0 la final daca e impar
+        n = len(x)
     par = FFT(x[0::2])
     imp = FFT(x[1::2])
-    T = [np.exp(-2j * np.pi * k / n) * imp[k] for k in range(n // 2)]
-    return [par[k] + T[k] for k in range(n // 2)] + [par[k] - T[k] for k in range(n // 2)]
+    m = min(len(par), len(imp)) # same length when padded
+    T = [np.exp(-2j * np.pi * k / n) * imp[k] for k in range(m)]
+    return [par[k] + T[k] for k in range(m)] + [par[k] - T[k] for k in range(m)]
+
 
 frecventa_de_esantionare = 600
 durata = 1
