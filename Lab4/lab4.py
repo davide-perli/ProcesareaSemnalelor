@@ -1,4 +1,4 @@
-import numpy as np, matplotlib.pyplot as plt, time, matplotlib.image as img, math
+import numpy as np, matplotlib.pyplot as plt, time, matplotlib.image as img, scipy.io.wavfile as wavf, sounddevice, scipy
 
 # Ex 1
 def DFT(x):
@@ -56,7 +56,7 @@ for N in N_values:
     np.fft.fft(semnal)
     timp_numpy.append(time.time() - start)
 
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(10, 8))
 plt.plot(N_values, timp_DFT, "o-", label="DFT")
 plt.plot(N_values, timp_FFT, "o-", label="FFT Manual")
 plt.plot(N_values, timp_numpy, "o-", label="FFT Numpy")
@@ -65,7 +65,8 @@ plt.xlabel("Dimensiunea vectorului N")
 plt.ylabel("Timp de execuție log scale")
 plt.title("Compararea timpiilor de execuție: DFT vs FFT")
 plt.grid(True)
-plt.legend()
+plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+plt.tight_layout()
 plt.savefig(fname="./Lab4/dft_vs_fft_manual_vs_fft_numpy.pdf", format="pdf")
 plt.show()
 
@@ -196,6 +197,23 @@ im = img.imread("./Lab4/spectograma_audacity.png")
 plt.imshow(im)
 plt.title("Spectrograma inregistrarii vocalelor cu Audacity")
 plt.axis('off')
+plt.show()
+
+# Ex 6
+
+rata, semnal = wavf.read("./Lab4/vocale.wav")
+nr_channels = semnal.ndim
+print("Number of channels: ", nr_channels)
+sounddevice.play(semnal, rata)
+sounddevice.wait()
+fig, axs = plt.subplots(nr_channels, 1, sharex=True, sharey=True, gridspec_kw={"hspace": 0})
+for i in range(2):
+    frequencies, times, spectrogram = scipy.signal.spectrogram(semnal[:, i], rata)
+    axs[i].pcolormesh(times, frequencies, np.log(spectrogram), cmap="summer")
+    axs[i].set_ylabel(f"Frequency - Channel {i+1}")
+axs[1].set_xlabel('Time [sec]')
+plt.tight_layout()
+plt.savefig("./Lab4/spectograma_manuala_scipy.pdf", format="pdf")
 plt.show()
 
 # Ex 7
