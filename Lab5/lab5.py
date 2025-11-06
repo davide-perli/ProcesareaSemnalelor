@@ -86,3 +86,30 @@ plt.ylabel("Semnal")
 plt.grid(True)
 plt.savefig("./Lab5/semnal_trafic_pe_o_luna_de_luni.pdf", format="pdf")
 plt.show()
+
+# Ex h
+
+plt.figure(figsize=(14, 5))
+plt.plot(signal)
+plt.title("Semnal complet")
+plt.xlabel("Esantion")
+plt.ylabel("Semnal")
+plt.grid(True)
+plt.savefig("./Lab5/semnal_trafic_complet.pdf", format="pdf")
+plt.show()
+
+# Nu se stie cand a inceput masuratoarea cu exactitate, dar acesta a durat 2.09 ani sau 762 de zile.
+# Daca dau zoom in pe graficul de mai sus cu traficul total, se observa in spike mare din aproximativ 500 in 500 de ore adica la aproximativ 20 de zile.
+# Observ pauze in semnal de aproximativ 15 ore, ceea ce ar putea corespunde cu orele de noapte cand traficul este mai scazut.
+# Activitatea in semnal pare a fi de de 12-15 ore, ceea ce ar putea corespunde cu orele de zi cand traficul este mai intens. 
+# De asemenea, un prim spike mare se observa in jurul 
+# orei 1650-1700 pe graficul complet, ceea ce ar corespunde cu 1650 / 24 = ~68.75 zile.
+# Astfel, se poate presupune ca masuratoarea a inceput intr-o zi de weekend, cand traficul este mai scazut, si ca spike-urile mari corespund
+# cu zilele lucratoare din saptamana, cand traficul este mai intens. Trendul este unul crectator, ceea ce sugereaza o crester a numarului de masini
+# utilizate care ar creste pe masura ce anul progreseaza (din toamna spre primavara/inceputul verii cu scoli, facultati etc.)
+# Deci masuratoarea ar fi inceput intr-o zi de weekend cel mai probail vara prin iulie/august cand multa lume e plecata in vacanta.
+# (Excluzand ca masuratoare a fost facuta intr-o zone puternic turistica)
+# De asemenea, crestera mare a semnalului in timp fara o revenire macar aproape de valoearea initiala sugereaza ca masuratoarea a inceput in perioada 
+# pandemiei cand traficul era scazut si a crescut pe masura ce au fost ridicate restrictiile. Semnalul este slab timp de aproximativ 6000 de ore
+# (aproximativ 250 de zile) dupa care incepe sa creasca semnificativ (posibil corelat cu finalul carantinei si ridicarea restrictiilor de circulatie)
+# care ar fi in jurul datei de 15 Mai 2020, deci masuratoarea ar fi inceput in August 2019.
