@@ -1,4 +1,4 @@
-import numpy as np, matplotlib.pyplot as plt, csv
+import numpy as np, matplotlib.pyplot as plt, csv, scipy.signal as sig
 
 x = np.genfromtxt('./Lab5/Train.csv', delimiter=",")
 signal = x[:, 2]  
@@ -113,3 +113,24 @@ plt.show()
 # pandemiei cand traficul era scazut si a crescut pe masura ce au fost ridicate restrictiile. Semnalul este slab timp de aproximativ 6000 de ore
 # (aproximativ 250 de zile) dupa care incepe sa creasca semnificativ (posibil corelat cu finalul carantinei si ridicarea restrictiilor de circulatie)
 # care ar fi in jurul datei de 15 Mai 2020, deci masuratoarea ar fi inceput in August 2019.
+
+
+# Ex i
+
+# Sursa: https://mpastell.com/2010/01/18/fir-with-scipy/
+fc = 1 / (24*3600)  # 1 ciclu pe zi in Hz
+norm_cutoff = fc / (0.5 * fs)  # normalized
+b = sig.firwin(61, cutoff=norm_cutoff, window="hamming")
+a = [1.0] # FIR filter denominator
+filtered_signal = sig.filtfilt(b, a, signal)
+
+plt.figure(figsize=(13, 5))
+plt.plot(signal, label='Original')
+plt.plot(filtered_signal, label='Filtered (FIR)', color='red')
+plt.title("FIR filtered signal (low-pass)")
+plt.xlabel("Esantion")
+plt.ylabel("Semnal")
+plt.legend()
+plt.grid(True)
+plt.savefig("./Lab5/semnal_trafic_filtrat_fir.pdf", format="pdf")
+plt.show()
