@@ -67,3 +67,22 @@ top_frec = f[top_indici]
 print("Primele 4 varfuri ale modulului transformatei Fourier si frecventele lor:")
 for i in range(4):
     print(f"{i+1}. Amplitudine: {top_indici[i]}, Frecventa: {top_frec[i]} Hz")
+
+# Ex g
+#
+# 1 esantione pe ora => 24 esantionae pe zi => 168 de esantionae pe sapatamana => 720 de esantionae pe luna
+
+index_start = 168 
+ore_luna = 720
+end_index = index_start + ore_luna
+semnal_luna = signal[index_start:end_index]
+t = np.arange(len(semnal_luna))
+
+plt.figure(figsize=(12, 5))
+plt.plot(t, semnal_luna)
+plt.title("Trafic intr-o luna")
+plt.xlabel("Timp [ore]")
+plt.ylabel("Semnal")
+plt.grid(True)
+plt.savefig("./Lab5/semnal_trafic_pe_o_luna_de_luni.pdf", format="pdf")
+plt.show()
