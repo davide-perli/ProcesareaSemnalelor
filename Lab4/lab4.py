@@ -164,12 +164,14 @@ fig, ax = plt.subplots(3, 1, figsize=(12, 10))
 ax[0].plot(t_mare, semnal_continuu, label="Semnal continuu", color="blue")
 ax[0].scatter(t_corect, semnal_esantionat_corect, label="Esantionat", color="red")
 ax[0].set_title("Fara aliasing (f_s > f_Nyquist)")
+ax[0].set_xlim(0, 0.5)
 ax[0].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[0].grid(True)
 
 ax[1].plot(t_mare, semnal_continuu, label="Semnal continuu", color="blue")
 ax[1].scatter(t_mic, semnal_esantionat_alias, label="Esantionat", color="orange")
 ax[1].set_title("Cu aliasing (f_s < f_Nyquist)")
+ax[1].set_xlim(0, 0.5)
 ax[1].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[1].grid(True)
 
@@ -180,6 +182,7 @@ ax[2].scatter(t_corect, np.sin(2 * np.pi * frec_1 * t_corect), color="red", labe
 ax[2].scatter(t_corect, np.sin(2 * np.pi * frec_2 * t_corect), color="blue", label="Esantionare 2")
 ax[2].scatter(t_corect, np.sin(2 * np.pi * frecventa * t_corect),  color="green", label="Esantionare 3")
 ax[2].set_title("Comparare semnal 1 vs semnal 2 vs semnal 3")
+ax[2].set_xlim(0, 0.5)
 ax[2].legend(loc="center left", bbox_to_anchor=(1, 0.5))
 ax[2].grid(True)
 

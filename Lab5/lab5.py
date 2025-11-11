@@ -12,7 +12,7 @@ X_mod = abs(X / N) # Modulul transformatei
 X_mod = X_mod[:N // 2] # Doar prima jumatate ca e simetrica
 # Ex a 
 
-# Semnalul a fost masurat din ora in ora (3600 de secunde). Sunt 18288 de esantionae
+# Semnalul a fost masurat din ora in ora (3600 de secunde).
 # fs = 1 / 3600 Hz
 fs = round(1 / 3600, 6)
 print("Frecventa de esantionare a semnalului Train.csv este: ", fs)
@@ -119,6 +119,24 @@ plt.show()
 
 # Sursa: https://mpastell.com/2010/01/18/fir-with-scipy/
 fc = 1 / (24*3600)  # 1 ciclu pe zi in Hz
+norm_cutoff = fc / (0.7 * fs)  # normalized
+b = sig.firwin(61, cutoff=norm_cutoff, window="hamming")
+a = [1.0] # FIR filter denominator
+filtered_signal = sig.filtfilt(b, a, signal)
+
+plt.figure(figsize=(13, 5))
+plt.plot(signal, label='Original')
+plt.plot(filtered_signal, label='Filtered (FIR)', color='red')
+plt.title("FIR filtered signal (low-pass)")
+plt.xlabel("Esantion")
+plt.ylabel("Semnal")
+plt.legend()
+plt.grid(True)
+plt.savefig("./Lab5/semnal_trafic_filtrat_fir_07.pdf", format="pdf")
+plt.show()
+
+
+fc = 1 / (24*3600)  # 1 ciclu pe zi in Hz
 norm_cutoff = fc / (0.5 * fs)  # normalized
 b = sig.firwin(61, cutoff=norm_cutoff, window="hamming")
 a = [1.0] # FIR filter denominator
@@ -132,5 +150,24 @@ plt.xlabel("Esantion")
 plt.ylabel("Semnal")
 plt.legend()
 plt.grid(True)
-plt.savefig("./Lab5/semnal_trafic_filtrat_fir.pdf", format="pdf")
+plt.savefig("./Lab5/semnal_trafic_filtrat_fir_05.pdf", format="pdf")
+plt.show()
+
+
+
+semnal_fft = np.fft.fft(signal)
+freq_fft = np.fft.fftfreq(len(signal), d=1/fs)
+
+semnal_fft[np.abs(freq_fft) > fc] = 0
+semnal_filtrat_fft = np.fft.ifft(semnal_fft)
+
+plt.figure(figsize=(13, 5))
+plt.plot(signal, label='Original')
+plt.plot(semnal_filtrat_fft, label='Filtered (FFT)', color='red')
+plt.title("FFT filtered signal (low-pass)")
+plt.xlabel("Esantion")
+plt.ylabel("Semnal")
+plt.legend()
+plt.grid(True)
+plt.savefig("./Lab5/semnal_trafic_filtrat_fft.pdf", format="pdf")
 plt.show()
