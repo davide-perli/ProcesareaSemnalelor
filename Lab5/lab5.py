@@ -78,6 +78,7 @@ end_index = index_start + ore_luna
 semnal_luna = signal[index_start:end_index]
 t = np.arange(len(semnal_luna))
 
+# Ziua de luni incepe cu primul spike mare (in jururl ore 200)
 plt.figure(figsize=(12, 5))
 plt.plot(t, semnal_luna)
 plt.title("Trafic intr-o luna")
