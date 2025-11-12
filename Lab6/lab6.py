@@ -149,3 +149,38 @@ plt.tight_layout(pad=5.0)
 plt.savefig("./Lab6/ex2_semnal_bloc_rectangular.pdf", format="pdf")
 plt.show()
 
+# Ex 3
+
+N = 4
+
+coef_p = np.random.randint(-13, 12, N+1)
+coef_q = np.random.randint(-13, 12, N+1)
+p = np.poly1d(coef_p)
+q = np.poly1d(coef_q)
+r = np.polymul(p, q)
+print(f"Numpy (p*q):\n{r}\n")
+
+M = len(coef_p) + len(coef_q) - 1
+
+fft_p = np.fft.fft(coef_p[::-1], M)  # Inversare ca sa fie ca la polymul
+fft_q = np.fft.fft(coef_q[::-1], M)
+
+fft_r = fft_p * fft_q
+
+coef_r = np.fft.ifft(fft_r).real 
+
+coef_r = np.round(coef_r)[::-1]
+r_fft = np.poly1d(coef_r)
+print(f"FFT (p*q):\n{r_fft}\n")
+
+# Ex 4
+
+n = 20
+t = np.linspace(0, np.pi, n)  
+x = np.sin(t)
+d = 3
+y = np.roll(x, d)
+deplasarea_recuperata_fara_conjugata = np.fft.ifft(np.fft.fft(x) * np.fft.fft(y)).real.argmax()
+deplasarea_recuperata_cu_conjugata = len(x) - np.fft.ifft(np.fft.fft(x) * np.conj(np.fft.fft(y))).real.argmax()
+deplasare_recuperata_formula2 = np.fft.ifft(np.fft.fft(y) * np.conj(np.fft.fft(x)) /  np.abs(np.fft.fft(y) * np.conj(np.fft.fft(x)))).real.argmax()
+print(f"Deplasarea originala: {d}\nDeplasarea recuperata cu IFFT(FFT(x) · FFT(y)) (aproximeaza deplasarea): {deplasarea_recuperata_fara_conjugata}\nDeplasarea recuperata cu len(semnal) - IFFT(FFT(x) · conjugata(FFT(y))) (deplasarea e precisa): {deplasarea_recuperata_cu_conjugata}\nDeplasarea recuperata cu IFFT(FFT(y) ⊘ FFT(x)) (deplasarea e precisa): {deplasare_recuperata_formula2}")
