@@ -184,3 +184,172 @@ deplasarea_recuperata_fara_conjugata = np.fft.ifft(np.fft.fft(x) * np.fft.fft(y)
 deplasarea_recuperata_cu_conjugata = len(x) - np.fft.ifft(np.fft.fft(x) * np.conj(np.fft.fft(y))).real.argmax()
 deplasare_recuperata_formula2 = np.fft.ifft(np.fft.fft(y) * np.conj(np.fft.fft(x)) /  np.abs(np.fft.fft(y) * np.conj(np.fft.fft(x)))).real.argmax()
 print(f"Deplasarea originala: {d}\nDeplasarea recuperata cu IFFT(FFT(x) · FFT(y)) (aproximeaza deplasarea): {deplasarea_recuperata_fara_conjugata}\nDeplasarea recuperata cu len(semnal) - IFFT(FFT(x) · conjugata(FFT(y))) (deplasarea e precisa): {deplasarea_recuperata_cu_conjugata}\nDeplasarea recuperata cu IFFT(FFT(y) ⊘ FFT(x)) (deplasarea e precisa): {deplasare_recuperata_formula2}")
+
+# Ex 5
+
+f = 100
+A = 1
+phi = 0
+perioada = 1
+fs = 500
+t = np.linspace(0, perioada, int(perioada * fs))
+Nw = 200
+semnal_sinusoidal = A * np.sin(2 * np.pi * f * t + phi)
+hanning_window = np.hanning(Nw)
+signal_through_hanning = semnal_sinusoidal[:Nw] * hanning_window
+rectangular_window = np.ones(Nw)
+signal_through_rect_windows = semnal_sinusoidal[:Nw] * rectangular_window
+
+plt.plot(t[:Nw], semnal_sinusoidal[:Nw], label="Semnal original")
+plt.plot(t[:Nw], signal_through_hanning, label="Semnal cu Hanning")
+plt.plot(t[:Nw], signal_through_rect_windows, label="Semnal cu Rectangular window")
+plt.title("Semnal original vs prin Hanning vs prin rectangular window")
+plt.xlabel("Timp [s]")
+plt.ylabel("Amplitudine")
+plt.legend(loc="upper right")
+plt.grid(True)
+plt.savefig("./Lab6/ex5_semnal_sinusoidal_prin_ferestre.pdf", format="pdf")
+plt.show()
+
+# Ex 6
+
+x = np.genfromtxt('./Lab5/Train.csv', delimiter=",")
+signal = x[:, 2]  
+signal = signal[~np.isnan(signal)] # Sterg nan values
+
+# a) pastrez datele pe 3 zile (72 de ore)
+signal_3days = signal[:72]
+
+plt.plot(signal_3days)
+plt.title("Semnal original pe 3 zile")
+plt.savefig("./Lab6/ex6_a_semnal_pe_3_zile.pdf", format="pdf")
+plt.show()
+
+# b)
+w_list = [5, 9, 13, 17]
+fig, axes = plt.subplots(len(w_list), 1)
+for ax, w in zip(axes, w_list):
+    semnal_netezit = np.convolve(signal_3days, np.ones(w), 'valid') / w
+    ax.plot(semnal_netezit)
+    ax.set_title(f"Semnal netezit cu w: {w}")
+    ax.grid(True)
+plt.tight_layout()
+plt.savefig("./Lab6/ex6_b_semnal_netezit_cu_diferite_w.pdf", format="pdf")
+plt.show()
+
+# c)
+
+print("Semnalul e esantionat la fiecare ora => fs = 1 => f_Nyquist = fs / 2 = 0.5. Frecventa de taiere f_t < f_Nyquist (f_t prea mica poate elimina si variatiile utile ale semnalului, una prea mare lasa sa treaca zgomot). Frecventa normalizata f_norm = f_t / f_Nyquist")
+f_t = 0.1
+
+# d, e)
+
+b_butter, a_butter = scipy.signal.butter(5, f_t, btype='low')
+semnal_filtrat_butter = scipy.signal.lfilter(b_butter, a_butter, signal_3days)
+
+rp_list = [5, 1, 10]
+plt.plot(semnal_filtrat_butter)
+plt.grid(True)
+plt.title("Filtru butter ordin 5")
+plt.savefig("./Lab6/ex6_f_semnal_filtrat_butter_ordin_5.pdf", format="pdf")
+plt.show()
+b_cheby, a_cheby = scipy.signal.cheby1(5, 5, f_t, btype='low')
+semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+plt.plot(semnal_filtrat_cheby)
+plt.grid(True)
+plt.title("Filtru cheby1 cu rp 5, ordin 5")
+plt.savefig("./Lab6/ex6_f_semnal_filtrart_cheby1_rp5_ordin_5.pdf", format="pdf")
+plt.show()
+
+fig, ax = plt.subplots(5, 1, figsize=(10, 12))
+ax[0].plot(signal_3days)
+ax[0].set_title("Semnal original")
+ax[0].grid(True)
+ax[1].plot(semnal_filtrat_butter)
+ax[1].set_title("Semnal filtrat cu filtru butter ordin 5")
+ax[1].grid(True)
+for i, rp in enumerate(rp_list):
+    b_cheby, a_cheby = scipy.signal.cheby1(5, rp, f_t, btype='low')
+    semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+    ax[i + 2].plot(semnal_filtrat_cheby)
+    ax[i + 2].set_title(f"Semnal filtrat cu filtru cheby1 cu rp: {rp} ordin 5")
+    ax[i + 2].grid(True)
+plt.tight_layout(pad=4.0)
+plt.savefig("./Lab6/ex6_d_e_semnal_filtrat_cu_filtru_cheby1(dif_rp)_si_butter_ordin_5.pdf", format="pdf")
+plt.show()
+
+# Aleg filtrul butter deoarece pare sa se aproprie mai mult de semnalul original
+
+# f) ordin 3
+
+b_butter, a_butter = scipy.signal.butter(3, f_t, btype='low')
+semnal_filtrat_butter = scipy.signal.lfilter(b_butter, a_butter, signal_3days)
+
+rp_list = [5, 1, 10]
+plt.plot(semnal_filtrat_butter)
+plt.grid(True)
+plt.title("Filtru butter ordin 3")
+plt.savefig("./Lab6/ex6_f_semnal_filtrat_butter_ordin_3.pdf", format="pdf")
+plt.show()
+b_cheby, a_cheby = scipy.signal.cheby1(3, 5, f_t, btype='low')
+semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+plt.plot(semnal_filtrat_cheby)
+plt.grid(True)
+plt.title("Filtru cheby1 cu rp 5, ordin 3")
+plt.savefig("./Lab6/ex6_f_semnal_filtrart_cheby1_rp5_ordin_3.pdf", format="pdf")
+plt.show()
+
+fig, ax = plt.subplots(5, 1, figsize=(10, 12))
+ax[0].plot(signal_3days)
+ax[0].set_title("Semnal original")
+ax[0].grid(True)
+ax[1].plot(semnal_filtrat_butter)
+ax[1].set_title("Semnal filtrat cu filtru butter ordin 3")
+ax[1].grid(True)
+for i, rp in enumerate(rp_list):
+    b_cheby, a_cheby = scipy.signal.cheby1(3, rp, f_t, btype='low')
+    semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+    ax[i + 2].plot(semnal_filtrat_cheby)
+    ax[i + 2].set_title(f"Semnal filtrat cu filtru cheby1 cu rp: {rp} ordin 3")
+    ax[i + 2].grid(True)
+plt.tight_layout(pad=4.0)
+plt.savefig("./Lab6/ex6_d_e_semnal_filtrat_cu_filtru_cheby1(dif_rp)_si_butter_ordin_3.pdf", format="pdf")
+plt.show()
+
+# f) ordin 8
+
+b_butter, a_butter = scipy.signal.butter(8, f_t, btype='low')
+semnal_filtrat_butter = scipy.signal.lfilter(b_butter, a_butter, signal_3days)
+
+rp_list = [5, 1, 10]
+plt.plot(semnal_filtrat_butter)
+plt.grid(True)
+plt.title("Filtru butter ordin 8")
+plt.savefig("./Lab6/ex6_f_semnal_filtrat_butter_ordin_8.pdf", format="pdf")
+plt.show()
+b_cheby, a_cheby = scipy.signal.cheby1(8, 5, f_t, btype='low')
+semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+plt.plot(semnal_filtrat_cheby)
+plt.grid(True)
+plt.title("Filtru cheby1 cu rp 5, ordin 8")
+plt.savefig("./Lab6/ex6_f_semnal_filtrart_cheby1_rp5_ordin_8.pdf", format="pdf")
+plt.show()
+
+fig, ax = plt.subplots(5, 1, figsize=(10, 12))
+ax[0].plot(signal_3days)
+ax[0].set_title("Semnal original")
+ax[0].grid(True)
+ax[1].plot(semnal_filtrat_butter)
+ax[1].set_title("Semnal filtrat cu filtru butter ordin 8")
+ax[1].grid(True)
+for i, rp in enumerate(rp_list):
+    b_cheby, a_cheby = scipy.signal.cheby1(8, rp, f_t, btype='low')
+    semnal_filtrat_cheby = scipy.signal.lfilter(b_cheby, a_cheby, signal_3days)
+    ax[i + 2].plot(semnal_filtrat_cheby)
+    ax[i + 2].set_title(f"Semnal filtrat cu filtru cheby1 cu rp: {rp} ordin 8")
+    ax[i + 2].grid(True)
+plt.tight_layout(pad=4.0)
+plt.savefig("./Lab6/ex6_d_e_semnal_filtrat_cu_filtru_cheby1(dif_rp)_si_butter_ordin_8.pdf", format="pdf")
+plt.show()
+
+# consirder ca cel mai bine s-a descuract cu ordin mai mic, 3, filtru cheby1 cu rp = 5
