@@ -13,11 +13,12 @@ fs_uri = [1.0, 1.5, 2.0, 4.0]
 fix, axes = plt.subplots(2, 2)
 for ax, fs in zip(axes.ravel(), fs_uri):
     Ts = 1 / fs
-    t_s = np.arange(-3, 3 + Ts / 2, Ts)
-    if 0 not in t_s:  
-        t_s = np.concatenate((t_s, [0.0]))
-        t_s.sort()
+    t_s_poz = np.arange(0, 3, Ts)
+    t_s_neg = np.arange(-Ts, -3, -Ts)
+    t_s = np.concatenate((t_s_neg, t_s_poz), axis=None)
     x_s = np.sinc(t_s * B) ** 2
+
+    x_recon = np.zeros_like(t, dtype=float)
 
     x_recon = np.zeros_like(t)
     for n, xn in enumerate(x_s):
@@ -45,11 +46,12 @@ fs_uri = [1.0, 1.5, 2.0, 4.0]
 fix, axes = plt.subplots(2, 2)
 for ax, fs in zip(axes.ravel(), fs_uri):
     Ts = 1 / fs
-    t_s = np.arange(-3, 3 + Ts / 2, Ts)
-    if 0 not in t_s:  
-        t_s = np.concatenate((t_s, [0.0]))
-        t_s.sort()
+    t_s_poz = np.arange(0, 3, Ts)
+    t_s_neg = np.arange(-Ts, -3, -Ts)
+    t_s = np.concatenate((t_s_neg, t_s_poz), axis=None)
     x_s = np.sinc(t_s * B) ** 2
+
+    x_recon = np.zeros_like(t, dtype=float)
 
     x_recon = np.zeros_like(t)
     for n, xn in enumerate(x_s):
@@ -71,20 +73,21 @@ plt.show()
 
 B = 7
 frec_esantionare = 5000
-t = np.linspace(-3, 3, frec_esantionare)
+t_poz = np.arange(0, 3, 1 / frec_esantionare)
+t_neg = np.arange(-3, 0, 1 / frec_esantionare)
+t = np.concatenate((t_neg, t_poz), axis=None)
 x = np.sinc(t * B) ** 2
 
 fs_uri = [1.0, 1.5, 2.0, 4.0]
 fix, axes = plt.subplots(2, 2)
 for ax, fs in zip(axes.ravel(), fs_uri):
     Ts = 1 / fs
-    t_s = np.arange(-3, 3 + Ts / 2, Ts)
-    if 0 not in t_s:  
-        t_s = np.concatenate((t_s, [0.0]))
-        t_s.sort()
+    t_s_poz = np.arange(0, 3, Ts)
+    t_s_neg = np.arange(-Ts, -3, -Ts)
+    t_s = np.concatenate((t_s_neg, t_s_poz), axis=None)
     x_s = np.sinc(t_s * B) ** 2
 
-    x_recon = np.zeros_like(t)
+    x_recon = np.zeros_like(t, dtype=float)
     for n, xn in enumerate(x_s):
         x_recon += x_s[n] * np.sinc((t - t_s[n]) / Ts)
     ax.plot(t, x, color="blue", label="Semnal continuu")
@@ -184,7 +187,11 @@ deplasarea_recuperata_fara_conjugata = np.fft.ifft(np.fft.fft(x) * np.fft.fft(y)
 deplasarea_recuperata_cu_conjugata = len(x) - np.fft.ifft(np.fft.fft(x) * np.conj(np.fft.fft(y))).real.argmax()
 deplasare_recuperata_formula2 = np.fft.ifft(np.fft.fft(y) * np.conj(np.fft.fft(x)) /  np.abs(np.fft.fft(y) * np.conj(np.fft.fft(x)))).real.argmax()
 print(f"Deplasarea originala: {d}\nDeplasarea recuperata cu IFFT(FFT(x) · FFT(y)) (aproximeaza deplasarea): {deplasarea_recuperata_fara_conjugata}\nDeplasarea recuperata cu len(semnal) - IFFT(FFT(x) · conjugata(FFT(y))) (deplasarea e precisa): {deplasarea_recuperata_cu_conjugata}\nDeplasarea recuperata cu IFFT(FFT(y) ⊘ FFT(x)) (deplasarea e precisa): {deplasare_recuperata_formula2}")
-
+plt.stem(np.fft.ifft(np.fft.fft(y) * np.conj(np.fft.fft(x)) /  np.abs(np.fft.fft(y) * np.conj(np.fft.fft(x)))).real)
+plt.grid(True)
+plt.title("Deplasarea recuperata cu IFFT(FFT(y) ⊘ FFT(x))")
+plt.savefig("./Lab6/ex4_recuperare_cu_IFFT(FFT(y)_⊘_FFT(x)).pdf", format="pdf")
+plt.show()
 # Ex 5
 
 f = 100
