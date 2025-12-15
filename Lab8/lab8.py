@@ -1,5 +1,4 @@
 import numpy as np, matplotlib.pyplot as plt
-from scipy import signal
 
 # Exercitiul 1
 
@@ -25,19 +24,19 @@ serie_timp = trend + sezon + noise
 
 fig, ax = plt.subplots(4, 1, figsize=(12, 8), sharex=True)
 
-ax[0].plot(X, serie_timp, color='k', lw=1)
+ax[0].plot(X, serie_timp)
 ax[0].set_title('Seria de timp (trend + sezon + zgomot)')
 ax[0].set_ylabel('Amplitudine')
 
-ax[1].plot(X, trend, color='tab:blue')
+ax[1].plot(X, trend)
 ax[1].set_title('Trend (polinom grad 2)')
 ax[1].set_ylabel('Amplitudine')
 
-ax[2].plot(X, sezon, color='tab:orange')
+ax[2].plot(X, sezon)
 ax[2].set_title('Sezon (doua frecvente)')
 ax[2].set_ylabel('Amplitudine')
 
-ax[3].plot(X, noise, color='tab:green')
+ax[3].plot(X, noise)
 ax[3].set_title('Zgomot alb gaussian')
 ax[3].set_xlabel('Timp')
 ax[3].set_ylabel('Amplitudine')
@@ -118,7 +117,7 @@ best_mse = float('inf')
 y = (serie_timp_centrata - np.mean(serie_timp_centrata)) / np.std(serie_timp_centrata)
 serie_timp = (serie_timp - np.mean(serie_timp)) / np.std(serie_timp)
 for p in range(1, 31):  
-    for m in range(1, 6): # predictie pe termen mai lung
+    for m in range(1, 6): # predictie pe termen mai scurt
         if p + m >= T:
             continue
 
