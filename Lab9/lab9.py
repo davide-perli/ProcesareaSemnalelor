@@ -54,7 +54,8 @@ def mediere_exponentiala(serie, alpha):
 def eroare_mse(original, filtrat):
 	return np.mean((original - filtrat) ** 2)
 
-alphas = np.linspace(0.01, 1, 100)
+# Cautam alpha in (0, 1) fara a include 1, altfel MSE devine 0 cand filtrarea reproduce exact seria
+alphas = np.linspace(0.01, 0.99, 100)
 mse_list = []
 for alpha in alphas:
 	filtrat = mediere_exponentiala(observed, alpha)
@@ -65,6 +66,14 @@ mediere_simpla = mediere_exponentiala(observed, alpha_opt)
 mediere_dubla = mediere_exponentiala(mediere_simpla, alpha_opt)
 mediere_tripla = mediere_exponentiala(mediere_dubla, alpha_opt)
 
+# MSE fata de seria originala
+mse_simpla = eroare_mse(observed, mediere_simpla)
+mse_dubla = eroare_mse(observed, mediere_dubla)
+mse_tripla = eroare_mse(observed, mediere_tripla)
+print(f"MSE simpla: {mse_simpla:.4f}")
+print(f"MSE dubla: {mse_dubla:.4f}")
+print(f"MSE tripla: {mse_tripla:.4f}")
+
 fig, ax = plt.subplots(4, 1, figsize=(12, 8))
 
 ax[0].plot(X, observed)
@@ -72,15 +81,15 @@ ax[0].set_title('Seria originala')
 ax[0].set_ylabel('Amplitudine')
 
 ax[1].plot(X, mediere_simpla)
-ax[1].set_title(f'Mediere exponentiala simpla (alpha = {alpha_opt:.2f})')
+ax[1].set_title(f'Mediere exponentiala simpla (alpha = {alpha_opt:.2f}, MSE = {mse_simpla:.4f})')
 ax[1].set_ylabel('Amplitudine')
 
 ax[2].plot(X, mediere_dubla)
-ax[2].set_title('Mediere exponentiala dubla')
+ax[2].set_title(f'Mediere exponentiala dubla (MSE = {mse_dubla:.4f})')
 ax[2].set_ylabel('Amplitudine')
 
 ax[3].plot(X, mediere_tripla)
-ax[3].set_title('Mediere exponentiala tripla')
+ax[3].set_title(f'Mediere exponentiala tripla (MSE = {mse_tripla:.4f})')
 ax[3].set_xlabel('Timp')
 ax[3].set_ylabel('Amplitudine')
 
